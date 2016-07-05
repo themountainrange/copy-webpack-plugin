@@ -258,6 +258,22 @@ describe('apply function', () => {
             .catch(done);
         });
 
+        it('can use a glob to move multiple files to a non-root directory with name, hash and ext', (done) => {
+            runEmit({
+                expectedAssetKeys: [
+                    'nested/file-22af64.txt',
+                    'nested/directory/directoryfile-22af64.txt',
+                    'nested/directory/nested/nestedfile-d41d8c.txt'
+                ],
+                patterns: [{
+                    from: '**/*',
+                    to: 'nested/[path]'
+                }]
+            })
+            .then(done)
+            .catch(done);
+        });
+
         it('can use a glob to move multiple files in a different relative context to a non-root directory', (done) => {
             runEmit({
                 expectedAssetKeys: [
@@ -591,6 +607,20 @@ describe('apply function', () => {
                     ignore: [
                         'file.*'
                     ]
+                }]
+            })
+            .then(done)
+            .catch(done);
+        });
+
+        it('allows pattern to contain name, hash or ext', (done) => {
+            runEmit({
+                expectedAssetKeys: [
+                    'directory/directoryfile-22af64.txt'
+                ],
+                patterns: [{
+                    from: 'directory/directoryfile.txt',
+                    to: 'directory/[name]-[hash:6].[ext]'
                 }]
             })
             .then(done)

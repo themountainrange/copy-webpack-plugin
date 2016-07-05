@@ -47,6 +47,7 @@ export default (opts) => {
                 copyUnmodified,
                 forceWrite,
                 relFileDest,
+                relFileSrc,
                 writtenAssetHashes
             });
         });

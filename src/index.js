@@ -138,6 +138,7 @@ function CopyWebpackPlugin(patterns = [], options = {}) {
                                     copyUnmodified,
                                     forceWrite,
                                     relFileDest,
+                                    relFileSrc,
                                     writtenAssetHashes
                                 });
                             });

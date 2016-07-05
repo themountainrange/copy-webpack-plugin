@@ -1,25 +1,19 @@
 import Promise from 'bluebird';
+import loaderUtils from 'loader-utils';
 
 /* eslint-disable import/no-commonjs */
 const fs = Promise.promisifyAll(require('fs-extra'));
 /* eslint-enable */
 
-import {
-    createHash
-} from 'crypto';
-
 export default (opts) => {
     const compilation = opts.compilation;
     // ensure forward slashes
-    const relFileDest = opts.relFileDest.replace(/\\/g, '/');
+    let relFileDest = opts.relFileDest.replace(/\\/g, '/');
+    const relFileSrc = opts.relFileSrc.replace(/\\/g, '/');
     const absFileSrc = opts.absFileSrc;
     const forceWrite = opts.forceWrite;
     const copyUnmodified = opts.copyUnmodified;
     const writtenAssetHashes = opts.writtenAssetHashes;
-
-    if (compilation.assets[relFileDest] && !forceWrite) {
-        return Promise.resolve();
-    }
 
     return fs
     .statAsync(absFileSrc)
@@ -30,12 +24,22 @@ export default (opts) => {
             return;
         }
 
-        function addToAssets() {
+        function addToAssets(content) {
+
+            relFileDest = loaderUtils.interpolateName(
+                {resourcePath: relFileSrc},
+                relFileDest,
+                {content});
+
+            if (compilation.assets[relFileDest] && !forceWrite) {
+                return;
+            }
+
             compilation.assets[relFileDest] = {
-                size () {
+                size: function() {
                     return stat.size;
                 },
-                source () {
+                source: function() {
                     return fs.readFileSync(absFileSrc);
                 }
             };
@@ -43,19 +47,16 @@ export default (opts) => {
             return relFileDest;
         }
 
-        if (copyUnmodified) {
-            return addToAssets();
-        }
-
         return fs.readFileAsync(absFileSrc)
-        .then((contents) => {
-            const hash = createHash('sha256').update(contents).digest('hex');
-            if (writtenAssetHashes[relFileDest] && writtenAssetHashes[relFileDest] === hash) {
+        .then((content) => {
+            var hash = loaderUtils.getHashDigest(content);
+            if (!copyUnmodified &&
+                writtenAssetHashes[relFileDest] &&
+                writtenAssetHashes[relFileDest] === hash) {
                 return;
             }
-
             writtenAssetHashes[relFileDest] = hash;
-            return addToAssets();
+            return addToAssets(content);
         });
     });
 };
