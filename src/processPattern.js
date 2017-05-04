@@ -7,7 +7,7 @@ import writeFile from './writeFile';
 const globAsync = Promise.promisify(require('glob')); // eslint-disable-line import/no-commonjs
 
 export default function processPattern(globalRef, pattern) {
-    const {info, debug, output, concurrency, assets} = globalRef;
+    const {info, debug, output, concurrency} = globalRef;
     const globArgs = _.assign({
         cwd: pattern.context
     }, pattern.fromArgs || {});
