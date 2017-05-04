@@ -5,7 +5,7 @@ import path from 'path';
 const fs = Promise.promisifyAll(require('fs')); // eslint-disable-line import/no-commonjs
 
 export default function writeFile(globalRef, pattern, file) {
-    const {info, debug, compilation, fileDependencies, written, copyUnmodified} = globalRef;
+    const {info, debug, compilation, fileDependencies, written, copyUnmodified, assets} = globalRef;
 
     return fs.statAsync(file.absoluteFrom)
     .then((stat) => {
@@ -79,6 +79,10 @@ export default function writeFile(globalRef, pattern, file) {
                 info(`skipping '${file.webpackTo}', because it already exists`);
                 return;
             }
+
+            // track file for manifest
+            var from = file.relativeFrom.split('static/')[1];
+            assets[from] = file.webpackTo;
 
             info(`writing '${file.webpackTo}' to compilation assets from '${file.absoluteFrom}'`);
             compilation.assets[file.webpackTo] = {

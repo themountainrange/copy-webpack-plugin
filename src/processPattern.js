@@ -82,10 +82,6 @@ export default function processPattern(globalRef, pattern) {
         file.webpackTo = file.webpackTo.replace(/\\/g, '/');
         info(`determined that '${fileFrom}' should write to '${file.webpackTo}'`);
 
-        // track file for manifest
-        let from = file.relativeFrom.split('static/')[1];
-        assets[from] = file.webpackTo;
-
         return writeFile(globalRef, pattern, file);
     }, {concurrency: concurrency || 100}); // This is usually less than file read maximums while staying performant
 }
