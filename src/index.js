@@ -89,7 +89,7 @@ function CopyWebpackPlugin(patterns = [], options = {}) {
             .catch((err) => {
                 compilation.errors.push(err);
             })
-            .finally((callback) => {
+            .finally(() => {
                 if (!options.writeManifest) {
                     callback();
                 } else {
