@@ -83,7 +83,7 @@ export default function processPattern(globalRef, pattern) {
         info(`determined that '${fileFrom}' should write to '${file.webpackTo}'`);
 
         // track file for manifest
-        let from = file.relativeFrom.split(process.env.STATIC_ROOT || 'static/')[1];
+        let from = file.relativeFrom.split('static/')[1];
         assets[from] = file.webpackTo;
 
         return writeFile(globalRef, pattern, file);
