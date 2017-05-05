@@ -80,7 +80,6 @@ export default function processPattern(globalRef, pattern) {
 
         // ensure forward slashes
         file.webpackTo = file.webpackTo.replace(/\\/g, '/');
-
         info(`determined that '${fileFrom}' should write to '${file.webpackTo}'`);
 
         return writeFile(globalRef, pattern, file);
