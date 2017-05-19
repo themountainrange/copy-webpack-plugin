@@ -4,6 +4,8 @@ import preProcessPattern from './preProcessPattern';
 import processPattern from './processPattern';
 import writeManifest from './writeManifest';
 
+let hasRun = false;
+
 function CopyWebpackPlugin(patterns = [], options = {}) {
     if (!Array.isArray(patterns)) {
         throw new Error('[copy-webpack-plugin] patterns must be an array');
@@ -50,6 +52,11 @@ function CopyWebpackPlugin(patterns = [], options = {}) {
         const written = {};
 
         compiler.plugin('emit', (compilation, cb) => {
+            if (compiler.options.watch && hasRun) {
+                cb();
+                return
+            }
+            hasRun = true;
             debug('starting emit');
             const callback = () => {
                 debug('finishing emit');
